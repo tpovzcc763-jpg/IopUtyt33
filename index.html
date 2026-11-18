@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Unity WebGL Player | Bus Ticket Demo</title>
+  <style>
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background: #231f20; }
+    #unity-canvas { display: block; position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; height: 100dvh; background: #231f20; outline: none; }
+    #debug { display: none; position: fixed; z-index: 1000; left: 8px; top: 8px; padding: 6px; background: #000c; color: white; font: 12px monospace; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <canvas id="unity-canvas" tabindex="-1"></canvas>
+  <div id="debug"></div>
+  <script src="Build/BUS WEB.loader.js"></script>
+  <script>
+    const canvas = document.getElementById('unity-canvas');
+    const debug = document.getElementById('debug');
+    const showDebug = new URLSearchParams(location.search).has('debug');
+    function resizeCanvas() {
+      // Size the CSS viewport and Unity's drawing surface consistently.
+      const width = document.documentElement.clientWidth;
+      const height = window.innerHeight;
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+      if (showDebug) {
+        debug.style.display = 'block';
+        debug.textContent = `viewport ${width}x${Math.round(height)} | screen ${screen.width}x${screen.height} | DPR ${devicePixelRatio}`;
+      }
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('orientationchange', resizeCanvas);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', resizeCanvas);
+
+    createUnityInstance(canvas, {
+      dataUrl: 'Build/BUS WEB.data',
+      frameworkUrl: 'Build/BUS WEB.framework.js',
+      codeUrl: 'Build/BUS WEB.wasm',
+      streamingAssetsUrl: 'StreamingAssets',
+      companyName: 'DefaultCompany',
+      productName: 'Bus Ticket',
+      productVersion: '1.0.2',
+      devicePixelRatio: 1
+    }).catch(function(error) {
+      console.error(error);
+      alert('Unity failed to load: ' + error);
+    });
+  </script>
+</body>
+</html>
